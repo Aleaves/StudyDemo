@@ -186,12 +186,18 @@ public class BaseDao<T> implements IBaseDao<T> {
 
     @Override
     public long update(T entity, T where) {
-        return 0;
+        Map map = getValues(entity);
+        ContentValues values = getContentValues(map);
+        Map whereMap = getValues(where);
+        Condition condition = new Condition(whereMap);
+        return sqLiteDatabase.update(tableName,values,condition.whereCause,condition.whereArgs);
     }
 
     @Override
     public int delete(T where) {
-        return 0;
+        Map map = getValues(where);
+        Condition condition = new Condition(map);
+        return sqLiteDatabase.delete(tableName,condition.whereCause,condition.whereArgs);
     }
 
     @Override

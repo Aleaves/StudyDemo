@@ -64,6 +64,31 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.bt_update).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                BaseDao baseDao = BaseDaoFactory.getInstance().getBaseDao(User.class);
+                User user = new User();
+                user.setId(2);
+                user.setName("netease111111");
+                user.setPassword("111");
+
+                User where = new User();
+                where.setId(2);
+                baseDao.update(user,where);
+            }
+        });
+
+        findViewById(R.id.bt_delete).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                BaseDao baseDao = BaseDaoFactory.getInstance().getBaseDao(User.class);
+                User where = new User();
+                where.setName("netease111111");
+                baseDao.delete(where);
+            }
+        });
+
     }
 
     private void  test(){
