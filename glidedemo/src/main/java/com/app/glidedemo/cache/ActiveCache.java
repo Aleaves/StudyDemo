@@ -1,5 +1,6 @@
 package com.app.glidedemo.cache;
 
+import com.app.glidedemo.Tool;
 import com.app.glidedemo.resource.Value;
 
 import java.lang.ref.Reference;
@@ -19,6 +20,7 @@ public class ActiveCache {
 
 
     public void put(String key, Value value) {
+        Tool.checkNotEmpty(key);
         mapList.put(key, new CustomWeakReference(value, getQueue(), key));
     }
 
