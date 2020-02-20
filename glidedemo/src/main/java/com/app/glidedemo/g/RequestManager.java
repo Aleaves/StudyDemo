@@ -79,6 +79,7 @@ public class RequestManager {
 
     public RequestTargetEngine load(String s){
         mHandler.removeMessages(NEXT_HANDLER_MSG);
+        requestTargetEngine.loadValueInitAction(s,requestManagerContext);
         return requestTargetEngine;
     }
 }

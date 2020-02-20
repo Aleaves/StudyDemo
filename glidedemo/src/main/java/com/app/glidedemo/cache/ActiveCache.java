@@ -2,6 +2,7 @@ package com.app.glidedemo.cache;
 
 import com.app.glidedemo.Tool;
 import com.app.glidedemo.resource.Value;
+import com.app.glidedemo.resource.ValueCallback;
 
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
@@ -17,10 +18,16 @@ public class ActiveCache {
     private boolean isCloseThread;
     private Thread thread;
     private boolean isShoudonRemove;
+    private ValueCallback valueCallback;
 
+    public ActiveCache(ValueCallback valueCallback) {
+        this.valueCallback = valueCallback;
+    }
 
     public void put(String key, Value value) {
         Tool.checkNotEmpty(key);
+        // 绑定Value的监听 --> Value发起来的（Value没有被使用了，就会发起这个监听，给外界业务需要来使用）
+        value.setCallback(valueCallback);
         mapList.put(key, new CustomWeakReference(value, getQueue(), key));
     }
 
