@@ -1,2 +1,2 @@
-include ':app', ':dbdemo', ':glidedemo'
+include ':app', ':dbdemo', ':glidedemo', ':kotdemo'
 rootProject.name='StudyDemo'
