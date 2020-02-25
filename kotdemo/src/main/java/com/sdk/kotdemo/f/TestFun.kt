@@ -49,5 +49,6 @@ class TestFun {
     var max = if (a > b) a else b
 
     //开启develop分支
+    //release解决bug
 
 }
