@@ -1,11 +1,11 @@
 package com.sdk.kotdemo
 
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
+import com.sdk.kotdemo.f.TestFun
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -19,6 +19,9 @@ class MainActivity : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         }
+        val testFun = TestFun()
+        //println("=========" + testFun.sum(1, 3))
+        testFun.test2()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
