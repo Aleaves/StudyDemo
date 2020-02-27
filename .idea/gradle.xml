@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/dbdemo" />
             <option value="$PROJECT_DIR$/glidedemo" />
             <option value="$PROJECT_DIR$/kotdemo" />
+            <option value="$PROJECT_DIR$/lib" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
