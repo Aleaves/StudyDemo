@@ -7,8 +7,14 @@ class B {
         this.name = name
     }
 
-    lateinit var name: String
+    var name: String
 
     var age: Int = 0
+
+    var stringRepresentation:String
+        get() = this.toString()
+        set(value) {
+            this.stringRepresentation = value
+        }
 
 }

@@ -1,8 +1,11 @@
 package com.sdk.kotdemo
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.sdk.kotdemo.f.TestFun
@@ -19,9 +22,10 @@ class MainActivity : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         }
+
         val testFun = TestFun()
         //println("=========" + testFun.sum(1, 3))
-        testFun.test2()
+        testFun.test4()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

@@ -1,5 +1,7 @@
 package com.sdk.kotdemo.f
 
+import android.util.Log
+
 class TestFun {
 
     var c = 1
@@ -51,4 +53,26 @@ class TestFun {
     //开启develop分支
     //release解决bug
     //feature分支开发新功能
+
+    fun test3(){
+        var b = B("b",3)
+
+        var c = C("122",23)
+        c.name
+    }
+
+    fun  test4(){
+        var d = D("122",23) {
+            Log.i("===========",it)
+        }
+        d.setOnNetCallBack(object :OnNetCallBack{
+            override fun OnSuccess() {
+
+            }
+        })
+        d.setA {
+            Log.i("==========",it)
+        }
+    }
+
 }
