@@ -8,8 +8,11 @@ import android.view.MenuItem
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
+import com.sdk.kotdemo.ext.setColor
+import com.sdk.kotdemo.ext.setName
 import com.sdk.kotdemo.f.TestFun
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,7 +25,9 @@ class MainActivity : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         }
-
+        fab.setColor()
+        //tv_name.text = "123"
+        tv_name.setName("45465")
         val testFun = TestFun()
         //println("=========" + testFun.sum(1, 3))
         testFun.test4()
