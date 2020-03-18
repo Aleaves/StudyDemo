@@ -1,42 +1,78 @@
 package com.sdk.db.core;
-
+import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
-import android.util.Log;
-import android.widget.FrameLayout;
-
 import com.sdk.db.annotation.DbField;
 import com.sdk.db.annotation.DbTable;
-
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class BaseDao<T> implements IBaseDao<T> {
 
     private SQLiteDatabase sqLiteDatabase;
     private String tableName;
     private Class<T> entityClass;
+    private HashMap<String, Field> cacheMap;
 
-    protected  boolean init(SQLiteDatabase sqLiteDatabase,Class<T> entityClass){
+    protected void init(SQLiteDatabase sqLiteDatabase, Class<T> entityClass) {
         this.sqLiteDatabase = sqLiteDatabase;
         this.entityClass = entityClass;
-
         //获取表名  如果有注解且不为空 则获取注解值   否则取类名
         DbTable dbTable = entityClass.getAnnotation(DbTable.class);
-        if(null != dbTable && !TextUtils.isEmpty(dbTable.value())){
+        if (null != dbTable && !TextUtils.isEmpty(dbTable.value())) {
             tableName = dbTable.value();
-        }else{
+        } else {
             tableName = entityClass.getSimpleName();
         }
-
         //建表sql语句
         String createTableSql = getCreateTableSql();
-        Log.i("==========",createTableSql);
-
-        return true;
+        sqLiteDatabase.execSQL(createTableSql);
+        cacheMap = new HashMap<>();
+        initCacheMap();
     }
 
     /**
-     * 拼接创建表哥的sql语句
+     *
+     */
+    private void initCacheMap() {
+        String sql = "select * from " + tableName;
+        Cursor cursor = sqLiteDatabase.rawQuery(sql, null);
+        //获取所有表列名
+        String[] columnNames = cursor.getColumnNames();
+        //获取所有成员变量
+        Field[] columnFields = entityClass.getDeclaredFields();
+        //将字段访问权限打开
+        for (Field field : columnFields) {
+            field.setAccessible(true);
+        }
+        for (String columnName : columnNames) {
+            Field columnField = null;
+            for (Field field : columnFields) {
+                String fieldName = null;
+                DbField dbField = field.getAnnotation(DbField.class);
+                if (null != dbField && !TextUtils.isEmpty(dbField.value())) {
+                    fieldName = dbField.value();
+                } else {
+                    fieldName = field.getName();
+                }
+                if (TextUtils.equals(columnName, fieldName)) {
+                    columnField = field;
+                    break;
+                }
+            }
+            if (null != columnField) {
+                cacheMap.put(columnName, columnField);
+            }
+        }
+    }
+
+
+    /**
+     * 拼接创建表格的sql语句
+     *
      * @return
      */
     private String getCreateTableSql() {
@@ -52,29 +88,29 @@ public class BaseDao<T> implements IBaseDao<T> {
             Class type = field.getType();
             String typeValue;
             DbField dbField = field.getAnnotation(DbField.class);
-            if(null != dbField && !TextUtils.isEmpty(dbField.value())){
+            if (null != dbField && !TextUtils.isEmpty(dbField.value())) {
                 typeValue = dbField.value();
-            }else{
+            } else {
                 typeValue = field.getName();
             }
-            if(type == String.class){
+            if (type == String.class) {
                 stringBuilder.append(typeValue + " TEXT,");
-            }else if(type == Integer.class || type == int.class){
+            } else if (type == Integer.class || type == int.class) {
                 stringBuilder.append(typeValue + " INTEGER,");
-            }else if(type == Long.class){
+            } else if (type == Long.class) {
                 stringBuilder.append(typeValue + " BIGINT,");
-            }else if(type == Double.class){
+            } else if (type == Double.class) {
                 stringBuilder.append(typeValue + " DOUBLE,");
-            }else if(type == byte[].class){
+            } else if (type == byte[].class) {
                 stringBuilder.append(typeValue + " BLOB,");
-            }else{
+            } else {
                 //不支持该类型
                 continue;
             }
         }
         //删除最后一个符号
-        if(stringBuilder.charAt(stringBuilder.length() -1) == ','){
-            stringBuilder.deleteCharAt(stringBuilder.length()-1);
+        if (stringBuilder.charAt(stringBuilder.length() - 1) == ',') {
+            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
         }
         stringBuilder.append(")");
 
@@ -83,7 +119,59 @@ public class BaseDao<T> implements IBaseDao<T> {
 
     @Override
     public long insert(T entity) {
-        return 0;
+        Map<String,String> map = getValues(entity);
+        ContentValues contentValues = getContentValues(map);
+        return sqLiteDatabase.insert(tableName,null,contentValues);
+    }
+
+    /**
+     * map转ContentValues
+     * @param map
+     * @return
+     */
+    private ContentValues getContentValues(Map<String, String> map) {
+        ContentValues contentValues = new ContentValues();
+        for(String key :map.keySet()){
+            String value = map.get(key);
+            if(null != value){
+                contentValues.put(key,value);
+            }
+        }
+        return contentValues;
+    }
+
+    /**
+     * 将对象的值 和key对应起来 存到map中
+     * @param entity
+     * @return
+     */
+    private Map<String,String> getValues(T entity){
+        HashMap<String,String> map = new HashMap<>();
+        Iterator<Field> fieldIterator = cacheMap.values().iterator();
+        while (fieldIterator.hasNext()){
+            Field field = fieldIterator.next();
+            field.setAccessible(true);
+            try {
+                Object object = field.get(entity);
+                if(null == object){
+                    continue;
+                }
+                String value = object.toString();
+                String key = null;
+                DbField dbField = field.getAnnotation(DbField.class);
+                if(null != dbField && !TextUtils.isEmpty(dbField.value())){
+                    key = dbField.value();
+                }else{
+                    key = field.getName();
+                }
+                if(!TextUtils.isEmpty(key) && !TextUtils.isEmpty(value)){
+                    map.put(key,value);
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return map;
     }
 
 }
