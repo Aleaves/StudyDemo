@@ -9,7 +9,9 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/db" />
             <option value="$PROJECT_DIR$/dbdemo" />
+            <option value="$PROJECT_DIR$/dbutil" />
             <option value="$PROJECT_DIR$/glidedemo" />
             <option value="$PROJECT_DIR$/kotdemo" />
           </set>
