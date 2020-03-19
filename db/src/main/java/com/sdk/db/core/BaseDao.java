@@ -1,13 +1,17 @@
 package com.sdk.db.core;
+
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
+
 import com.sdk.db.annotation.DbField;
 import com.sdk.db.annotation.DbTable;
+
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class BaseDao<T> implements IBaseDao<T> {
@@ -119,22 +123,49 @@ public class BaseDao<T> implements IBaseDao<T> {
 
     @Override
     public long insert(T entity) {
-        Map<String,String> map = getValues(entity);
+        Map<String, String> map = getValues(entity);
         ContentValues contentValues = getContentValues(map);
-        return sqLiteDatabase.insert(tableName,null,contentValues);
+        return sqLiteDatabase.insert(tableName, null, contentValues);
+    }
+
+    @Override
+    public long update(T tentity, T where) {
+        return 0;
+    }
+
+    @Override
+    public int delete(T entity) {
+        return 0;
+    }
+
+    @Override
+    public List<T> query(T where) {
+        return query(where, null, null, null);
+    }
+
+    @Override
+    public List<T> query(T where, String orderBy, Integer startIndex, Integer limit) {
+        Map map = getValues(where);
+        String limitString = null;
+        if (startIndex != null && limit != null) {
+            limitString = startIndex + "," + limit;
+        }
+
+        return null;
     }
 
     /**
      * map转ContentValues
+     *
      * @param map
      * @return
      */
     private ContentValues getContentValues(Map<String, String> map) {
         ContentValues contentValues = new ContentValues();
-        for(String key :map.keySet()){
+        for (String key : map.keySet()) {
             String value = map.get(key);
-            if(null != value){
-                contentValues.put(key,value);
+            if (null != value) {
+                contentValues.put(key, value);
             }
         }
         return contentValues;
@@ -142,30 +173,31 @@ public class BaseDao<T> implements IBaseDao<T> {
 
     /**
      * 将对象的值 和key对应起来 存到map中
+     *
      * @param entity
      * @return
      */
-    private Map<String,String> getValues(T entity){
-        HashMap<String,String> map = new HashMap<>();
+    private Map<String, String> getValues(T entity) {
+        HashMap<String, String> map = new HashMap<>();
         Iterator<Field> fieldIterator = cacheMap.values().iterator();
-        while (fieldIterator.hasNext()){
+        while (fieldIterator.hasNext()) {
             Field field = fieldIterator.next();
             field.setAccessible(true);
             try {
                 Object object = field.get(entity);
-                if(null == object){
+                if (null == object) {
                     continue;
                 }
                 String value = object.toString();
                 String key = null;
                 DbField dbField = field.getAnnotation(DbField.class);
-                if(null != dbField && !TextUtils.isEmpty(dbField.value())){
+                if (null != dbField && !TextUtils.isEmpty(dbField.value())) {
                     key = dbField.value();
-                }else{
+                } else {
                     key = field.getName();
                 }
-                if(!TextUtils.isEmpty(key) && !TextUtils.isEmpty(value)){
-                    map.put(key,value);
+                if (!TextUtils.isEmpty(key) && !TextUtils.isEmpty(value)) {
+                    map.put(key, value);
                 }
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
