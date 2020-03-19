@@ -150,7 +150,6 @@ public class BaseDao<T> implements IBaseDao<T> {
         if (startIndex != null && limit != null) {
             limitString = startIndex + "," + limit;
         }
-
         return null;
     }
 
