@@ -26,6 +26,10 @@ public class BaseDaoFactory {
         return instance;
     }
 
+    public SQLiteDatabase getSqLiteDatabase(){
+        return sqLiteDatabase;
+    }
+
     public <T> BaseDao<T> getBaseDao(Class<T> entityClass){
         BaseDao baseDao = new BaseDao();
         baseDao.init(sqLiteDatabase,entityClass);

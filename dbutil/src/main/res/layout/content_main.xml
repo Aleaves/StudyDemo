@@ -23,4 +23,30 @@
         android:id="@+id/bt_insert_dog"
         />
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="查询user"
+        android:id="@+id/bt_query_user"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="删除user"
+        android:id="@+id/bt_delete_user"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="更新user"
+        android:id="@+id/bt_update_user"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ximoon"
+        android:id="@+id/bt_ximoon"
+        />
+
 </LinearLayout>

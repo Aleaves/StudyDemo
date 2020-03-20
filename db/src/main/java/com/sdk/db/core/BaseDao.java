@@ -4,11 +4,13 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.sdk.db.annotation.DbField;
 import com.sdk.db.annotation.DbTable;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -92,21 +94,24 @@ public class BaseDao<T> implements IBaseDao<T> {
             Class type = field.getType();
             String typeValue;
             DbField dbField = field.getAnnotation(DbField.class);
+            boolean isUnique = false;
             if (null != dbField && !TextUtils.isEmpty(dbField.value())) {
                 typeValue = dbField.value();
+                isUnique = dbField.unique();
             } else {
                 typeValue = field.getName();
             }
+
             if (type == String.class) {
-                stringBuilder.append(typeValue + " TEXT,");
+                stringBuilder.append(typeValue + " TEXT" + (isUnique ? " UNIQUE," : ","));
             } else if (type == Integer.class || type == int.class) {
-                stringBuilder.append(typeValue + " INTEGER,");
+                stringBuilder.append(typeValue + " INTEGER" + (isUnique ? " UNIQUE," : ","));
             } else if (type == Long.class) {
-                stringBuilder.append(typeValue + " BIGINT,");
-            } else if (type == Double.class) {
-                stringBuilder.append(typeValue + " DOUBLE,");
+                stringBuilder.append(typeValue + " BIGINT" + (isUnique ? " UNIQUE," : ","));
+            } else if (type == Double.class || type == double.class) {
+                stringBuilder.append(typeValue + " DOUBLE" + (isUnique ? " UNIQUE," : ","));
             } else if (type == byte[].class) {
-                stringBuilder.append(typeValue + " BLOB,");
+                stringBuilder.append(typeValue + " BLOB" + (isUnique ? " UNIQUE," : ","));
             } else {
                 //不支持该类型
                 continue;
@@ -117,7 +122,6 @@ public class BaseDao<T> implements IBaseDao<T> {
             stringBuilder.deleteCharAt(stringBuilder.length() - 1);
         }
         stringBuilder.append(")");
-
         return stringBuilder.toString();
     }
 
@@ -129,13 +133,19 @@ public class BaseDao<T> implements IBaseDao<T> {
     }
 
     @Override
-    public long update(T tentity, T where) {
-        return 0;
+    public long update(T entity, T where) {
+        Map<String,String> map = getValues(entity);
+        ContentValues values = getContentValues(map);
+        Map<String,String> whereMap = getValues(where);
+        Condition condition = new Condition(whereMap);
+        return sqLiteDatabase.update(tableName,values,condition.whereCause,condition.whereArgs);
     }
 
     @Override
     public int delete(T entity) {
-        return 0;
+        Map<String, String> map = getValues(entity);
+        Condition condition = new Condition(map);
+        return sqLiteDatabase.delete(tableName, condition.whereCause, condition.whereArgs);
     }
 
     @Override
@@ -145,12 +155,61 @@ public class BaseDao<T> implements IBaseDao<T> {
 
     @Override
     public List<T> query(T where, String orderBy, Integer startIndex, Integer limit) {
-        Map map = getValues(where);
+        Map<String, String> map = getValues(where);
         String limitString = null;
         if (startIndex != null && limit != null) {
             limitString = startIndex + "," + limit;
         }
-        return null;
+        Condition condition = new Condition(map);
+        Cursor cursor = sqLiteDatabase.query(tableName, null, condition.whereCause, condition.whereArgs, null, null, orderBy, limitString);
+        //解析游标
+        List<T> result = getResult(cursor, where);
+        return result;
+    }
+
+    /**
+     * 解析游标
+     *
+     * @param cursor
+     * @param where
+     * @return
+     */
+    private List<T> getResult(Cursor cursor, T where) {
+        ArrayList list = new ArrayList();
+        Object item = null;
+        while (cursor.moveToNext()) {
+            try {
+                item = where.getClass().newInstance();
+                Iterator iterator = cacheMap.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    Map.Entry entry = (Map.Entry) iterator.next();
+                    String columnName = (String) entry.getKey();
+                    Integer columnIndex = cursor.getColumnIndex(columnName);
+                    Field field = (Field) entry.getValue();
+                    Class type = field.getType();
+                    if (columnIndex != -1) {
+                        if (type == String.class) {
+                            field.set(item, cursor.getString(columnIndex));
+                        } else if (type == double.class || type == Double.class) {
+                            field.set(item, cursor.getDouble(columnIndex));
+                        } else if (type == int.class || type == Integer.class) {
+                            field.set(item, cursor.getInt(columnIndex));
+                        } else if (type == long.class || type == Long.class) {
+                            field.set(item, cursor.getInt(columnIndex));
+                        } else if (type == byte[].class) {
+                            field.set(item, cursor.getBlob(columnIndex));
+                        } else {
+                            continue;
+                        }
+                    }
+                }
+                list.add(item);
+            } catch (Exception e) {
+
+            }
+        }
+        cursor.close();
+        return list;
     }
 
     /**
@@ -203,6 +262,26 @@ public class BaseDao<T> implements IBaseDao<T> {
             }
         }
         return map;
+    }
+
+    private class Condition {
+        private String whereCause;
+        private String[] whereArgs;
+
+        public Condition(Map<String, String> whereMap) {
+            ArrayList list = new ArrayList();
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("1=1");
+            for (String key : whereMap.keySet()) {
+                String value = whereMap.get(key);
+                if (!TextUtils.isEmpty(value)) {
+                    stringBuilder.append(" and " + key + " =?");
+                    list.add(value);
+                }
+            }
+            this.whereCause = stringBuilder.toString();
+            this.whereArgs = (String[]) list.toArray(new String[list.size()]);
+        }
     }
 
 }
