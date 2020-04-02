@@ -18,6 +18,7 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
@@ -415,16 +416,17 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * filter过滤操作符
+     *
      * @param view
      */
     public void RxFilter(View view) {
 
         //收到 1 3 4  5
-        Observable.just(1,2,3,4,5)
+        Observable.just(1, 2, 3, 4, 5)
                 .filter(new Predicate<Integer>() {
                     @Override
                     public boolean test(Integer integer) throws Exception {
-                        if(integer == 2){
+                        if (integer == 2) {
                             return false;
                         }
                         return true;
@@ -432,7 +434,7 @@ public class MainActivity extends AppCompatActivity {
                 }).subscribe(new Consumer<Integer>() {
             @Override
             public void accept(Integer integer) throws Exception {
-                Log.i(TAG,integer+"");
+                Log.i(TAG, integer + "");
             }
         });
 
@@ -440,16 +442,17 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * take过滤符号
+     *
      * @param view
      */
     public void RxTake(View view) {
 
-        Observable.interval(1,TimeUnit.SECONDS)
+        Observable.interval(1, TimeUnit.SECONDS)
                 .take(5)
                 .subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(Long aLong) throws Exception {
-                        Log.i(TAG,aLong+"");
+                        Log.i(TAG, aLong + "");
                     }
                 });
 
@@ -457,16 +460,17 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * distinct过滤符
+     *
      * @param view
      */
     public void RxDistinct(View view) {
 
-        Observable.just(1,1,3,4,4,5)
+        Observable.just(1, 1, 3, 4, 4, 5)
                 .distinct()
                 .subscribe(new Consumer<Integer>() {
                     @Override
                     public void accept(Integer integer) throws Exception {
-                        Log.i(TAG,integer+"");
+                        Log.i(TAG, integer + "");
                     }
                 });
 
@@ -474,19 +478,122 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * element过滤符
+     *
      * @param view
      */
     public void RxElement(View view) {
 
         //指定输出下标
-        Observable.just(1,2,3,4,5,6,7,8)
+        Observable.just(1, 2, 3, 4, 5, 6, 7, 8)
                 .elementAt(3)
                 .subscribe(new Consumer<Integer>() {
                     @Override
                     public void accept(Integer integer) throws Exception {
-                        Log.i(TAG,integer+"");
+                        Log.i(TAG, integer + "");
                     }
                 });
+
+    }
+
+    /**
+     * startWith合并符
+     *
+     * @param view
+     */
+    public void RxStartWith(View view) {
+        //startWith先执行
+        Observable.just(1, 2, 3)
+                .startWith(Observable.just(4, 5, 6))
+                .subscribe(new Consumer<Integer>() {
+                    @Override
+                    public void accept(Integer integer) throws Exception {
+                        Log.i(TAG, integer + "");
+                    }
+                });
+    }
+
+
+    /**
+     * concat合并符
+     *
+     * @param view
+     */
+    public void RxConcatWith(View view) {
+        //concatWith后执行
+        Observable.just(1, 2, 3, 4, 5)
+                .concatWith(Observable.just(6, 7, 8, 9))
+                .subscribe(new Consumer<Integer>() {
+                    @Override
+                    public void accept(Integer integer) throws Exception {
+                        Log.i(TAG, integer + "");
+                    }
+                });
+
+    }
+
+    /**
+     * merge合并符号
+     *
+     * @param view
+     */
+    public void RxMerge(View view) {
+
+        //合并一起发送  并行
+        Observable.mergeArray(
+                Observable.intervalRange(1, 5, 1, 1, TimeUnit.SECONDS),
+                Observable.intervalRange(6, 5, 1, 2, TimeUnit.SECONDS)
+        ).subscribe(new Consumer<Long>() {
+            @Override
+            public void accept(Long aLong) throws Exception {
+                Log.i(TAG, aLong + "");
+            }
+        });
+
+
+    }
+
+    /**
+     * concat合并符
+     *
+     * @param view
+     */
+    public void RxConcat(View view) {
+        //并行
+        Observable.concatArray(
+                Observable.intervalRange(1, 5, 1, 1, TimeUnit.SECONDS),
+                Observable.intervalRange(6, 5, 1, 2, TimeUnit.SECONDS)
+        ).subscribe(new Consumer<Long>() {
+            @Override
+            public void accept(Long aLong) throws Exception {
+                Log.i(TAG, aLong + "");
+            }
+        });
+
+    }
+
+    /**
+     * zip操作符
+     *
+     * @param view
+     */
+    public void RxZip(View view) {
+
+
+        Observable.zip(Observable.just(1, 2, 3, 4),
+                Observable.just("A", "B", "C"),
+                new BiFunction<Integer, String, String>() {
+                    @Override
+                    public String apply(Integer integer, String s) throws Exception {
+                        return integer + "===" + s;
+                    }
+                }).subscribe(new Consumer<String>() {
+            @Override
+            public void accept(String s) throws Exception {
+                Log.i(TAG, s);
+            }
+        });
+
+
 
     }
 }

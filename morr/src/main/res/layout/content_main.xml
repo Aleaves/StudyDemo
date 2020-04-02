@@ -26,14 +26,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="RxCreate"
-            android:text="RxCreate创建" />
+            android:text="RxCreate" />
 
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="RxJust"
-            android:text="RxJust创建" />
+            android:text="RxJust" />
 
         <Button
             android:layout_width="0dp"
@@ -191,7 +191,44 @@
             android:layout_weight="1"
             android:onClick="RxElement"
             android:text="element" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="RxStartWith"
+            android:text="startWith" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="RxConcatWith"
+            android:text="concatWith" />
+    </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        >
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="RxMerge"
+            android:text="mrege" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="RxConcat"
+            android:text="concat" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="RxZip"
+            android:text="zip" />
     </LinearLayout>
 
 </LinearLayout>
