@@ -594,6 +594,204 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+    }
 
+    /**
+     * onErrorReturn
+     *
+     * @param view
+     */
+    public void RxErrorReturn(View view) {
+
+        Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
+                for (int i = 0; i < 100; i++) {
+                    if (i == 5) {
+                        //emitter.onError(new IllegalAccessError("error"));
+                        throw new IllegalAccessException("error");
+                    }
+                    emitter.onNext(i);
+                }
+                emitter.onComplete();
+            }
+        }).onErrorReturn(new Function<Throwable, Integer>() {
+            @Override
+            public Integer apply(Throwable throwable) throws Exception {
+                Log.i(TAG, "onErrorReturn:" + throwable.getMessage());
+                return 404;
+            }
+        })
+        .subscribe(new Observer<Integer>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(Integer integer) {
+                Log.i(TAG, "onNext :" + integer);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.i(TAG, "onError:" + e.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+                Log.i(TAG, "onComplete");
+            }
+        });
+
+    }
+
+    /**
+     * onResumeNext
+     * @param view
+     */
+    public void RxResumeNext(View view) {
+        Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
+                for (int i = 0; i < 100; i++) {
+                    if (i == 5) {
+                        emitter.onError(new IllegalAccessError("error"));
+                        //throw new IllegalAccessException("error");
+                    }
+                    emitter.onNext(i);
+                }
+                emitter.onComplete();
+            }
+        }).onErrorResumeNext(new Function<Throwable, ObservableSource<? extends Integer>>() {
+            @Override
+            public ObservableSource<? extends Integer> apply(Throwable throwable) throws Exception {
+                return Observable.create(new ObservableOnSubscribe<Integer>() {
+                    @Override
+                    public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
+                        emitter.onNext(400);
+                        emitter.onNext(401);
+                        emitter.onNext(402);
+                        emitter.onComplete();
+                    }
+                });
+            }
+        })
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+                        Log.i(TAG, "onNext :" + integer);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.i(TAG, "onError:" + e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.i(TAG, "onComplete");
+                    }
+                });
+    }
+
+
+    /**
+     * onExceptionResumeNext
+     * @param view
+     */
+    public void RxExceptionNext(View view) {
+
+        Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
+                for (int i = 0; i < 100; i++) {
+                    if (i == 5) {
+                        //emitter.onError(new IllegalAccessError("error"));
+                        throw new IllegalAccessException("error");
+                    }
+                    emitter.onNext(i);
+                }
+                emitter.onComplete();
+            }
+        }).onExceptionResumeNext(new ObservableSource<Integer>() {
+            @Override
+            public void subscribe(Observer<? super Integer> observer) {
+                observer.onNext(400);
+                observer.onComplete();
+            }
+        })
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+                        Log.i(TAG, "onNext :" + integer);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.i(TAG, "onError:" + e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.i(TAG, "onComplete");
+                    }
+                });
+    }
+
+    /**
+     * retry
+     * @param view
+     */
+    public void RxRetry(View view) {
+        Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
+                for (int i = 0; i < 100; i++) {
+                    if (i == 5) {
+                        //emitter.onError(new IllegalAccessError("error"));
+                        throw new IllegalAccessException("error");
+                    }
+                    emitter.onNext(i);
+                }
+                emitter.onComplete();
+            }
+        }).retry(3,new Predicate<Throwable>() {
+            @Override
+            public boolean test(Throwable throwable) throws Exception {
+                return true;
+            }
+        })
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+                        Log.i(TAG, "onNext :" + integer);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.i(TAG, "onError:" + e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.i(TAG, "onComplete");
+                    }
+                });
     }
 }
