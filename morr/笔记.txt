@@ -49,3 +49,15 @@ onErrorReturn最先拦截到e.onError并且可以给下游返回一个 标识400
 onErrorResumeNext最先拦截到e.onError并且可以给下游返回一个 被观察者（还可以再次发送）
 onExceptionResumeNext 能在发生异常的时候，扭转乾坤，能够处理 throw new  XXX，可以真正的让App不奔溃   这三种都不会崩溃
 retry: return false; 代表不去重试  return true; 不停的重试
+----------------------------------------------------------------------------------
+RxJava线程切换
+异步线程区域
+Schedulers.io() ：代表io流操作，网络操作，文件流，耗时操作
+Schedulers.newThread()    ： 比较常规的，普普通通
+Schedulers.computation()  ： 代表CPU 大量计算 所需要的线程
+AndroidSchedulers.mainThread()  ： 专门为Android main线程量身定做的
+-----------------------------------------------------------------------------------
+http知识点复习
+HTTP的keep-alive是干什么的？
+在早期的HTTP/1.0中，每次http请求都要创建一个连接，而创建连接的过程需要消耗资源和时间，为了减少资源消耗，缩短响应时间，就需要重用连接。
+在后来的HTTP/1.1中，引入了重用连接的机制，就是在http请求头中加入Connection: keep-alive来告诉对方这个请求响应完成后不要关闭，下一次咱们还用这个请求继续交流。
