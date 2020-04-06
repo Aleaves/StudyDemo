@@ -1,0 +1,63 @@
+MVP + RxJava + Retrofit 学习
+------------------------------------------------------------------------
+RxJava概念与观察者设计模式。
+    1.起点 和 终点，一旦满足 起点 和 终点 这样的需求，都可以使用RxJava来实现。
+    2.标准中的观察者设计模式，一个被观察者 ---- 多个观察者 多次注册。
+    3.RxJava是改装的观察者设计模式，一个订阅(注册) 一个观察者。
+-------------------------------------------------------------------------
+RxJava创建型操作符 -- 专门创建 被观察者/上游/Observable。
+观察者：下游，接收事件  完整版本Observer  简化版Consumer
+create: 自己通过emitter.onNext发射事件  onComplete之后不能发射onError事件
+just:内部自己发射数据  最多只能发送10个参数
+fromArray：内部自己发射的  集合数据  可以发射10个以上的参数
+fromIterable: 内部自己发射的list集合数据  10个以上参数
+empty：无法发出有值事件，只会发射 onComplete
+defer：延迟发射  总有当订阅时 才会调用defer（）创建被观察者对象（Observable）
+timer: 延迟指定事件，发送一个0，一般用于检测
+interval:从0开始、无限递增1的的整数序列
+intervalRange : 每隔指定时间 就发送 事件，可指定发送的数据的数量 开始值可以自己设定
+range : 连续发送 可指定范围 开始值
+-----------------------------------------------------------------------------
+RxJava变换操作符
+map ： Int变换String
+flatMap ： 将Int 转成  ObservableSource<String>  下游 String 接收
+concatMap : 同flatMap  区别在于concatMap是有序发射   flatMap是无序发射
+buffer : buffer(20)  100个事件 分20批发送
+groupBy : 将int 变成String  观察者变成  GroupedObservable<String, Integer>
+-------------------------------------------------------------------------------
+RxJava过滤操作符
+filter ： 如果为true则发射   如果为false则被过滤
+take : 只有再定时器运行基础上 加入take过滤操作符，才有take过滤操作符的价值。
+distinct : 过滤重复的
+elementAt ：指定输出下标
+--------------------------------------------------------------------------------
+RxJava条件型操作符
+All: 如同 if 那样的功能 ：全部为true，才是true，只要有一个为false，就是false.
+contains 是否包含
+any 全部为 false，才是false， 只要有一个为true，就是true
+如果使用了条件操作符，下一层，接收的类型 就是条件类型(Boolean)
+--------------------------------------------------------------------------------
+RxJava合并操作符
+startWith : startWith（被观察者）先执行
+concatWith ： concatWith（被观察者）后执行
+merge/mergeArray : 合并一起发送   是并行的  mergeArray可以发送四个以上
+concat/concatArray: 合并发送  串行   concatArray可以发送四个以上
+zip:需要对应关系 需要对应，如果不对应，会被忽略的， 最多9个被观察者 进行合并
+---------------------------------------------------------------------------------
+RxJava异常操作符
+onErrorReturn最先拦截到e.onError并且可以给下游返回一个 标识400,
+onErrorResumeNext最先拦截到e.onError并且可以给下游返回一个 被观察者（还可以再次发送）
+onExceptionResumeNext 能在发生异常的时候，扭转乾坤，能够处理 throw new  XXX，可以真正的让App不奔溃   这三种都不会崩溃
+retry: return false; 代表不去重试  return true; 不停的重试
+----------------------------------------------------------------------------------
+RxJava线程切换
+异步线程区域
+Schedulers.io() ：代表io流操作，网络操作，文件流，耗时操作
+Schedulers.newThread()    ： 比较常规的，普普通通
+Schedulers.computation()  ： 代表CPU 大量计算 所需要的线程
+AndroidSchedulers.mainThread()  ： 专门为Android main线程量身定做的
+-----------------------------------------------------------------------------------
+http知识点复习
+HTTP的keep-alive是干什么的？
+在早期的HTTP/1.0中，每次http请求都要创建一个连接，而创建连接的过程需要消耗资源和时间，为了减少资源消耗，缩短响应时间，就需要重用连接。
+在后来的HTTP/1.1中，引入了重用连接的机制，就是在http请求头中加入Connection: keep-alive来告诉对方这个请求响应完成后不要关闭，下一次咱们还用这个请求继续交流。

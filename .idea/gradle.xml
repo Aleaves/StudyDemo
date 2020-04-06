@@ -13,6 +13,8 @@
             <option value="$PROJECT_DIR$/dbutil" />
             <option value="$PROJECT_DIR$/glidedemo" />
             <option value="$PROJECT_DIR$/kotdemo" />
+            <option value="$PROJECT_DIR$/morr" />
+            <option value="$PROJECT_DIR$/mvp" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
