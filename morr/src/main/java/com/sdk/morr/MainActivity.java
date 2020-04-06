@@ -7,22 +7,32 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
 import io.reactivex.observables.GroupedObservable;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -622,32 +632,33 @@ public class MainActivity extends AppCompatActivity {
                 return 404;
             }
         })
-        .subscribe(new Observer<Integer>() {
-            @Override
-            public void onSubscribe(Disposable d) {
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-            }
+                    }
 
-            @Override
-            public void onNext(Integer integer) {
-                Log.i(TAG, "onNext :" + integer);
-            }
+                    @Override
+                    public void onNext(Integer integer) {
+                        Log.i(TAG, "onNext :" + integer);
+                    }
 
-            @Override
-            public void onError(Throwable e) {
-                Log.i(TAG, "onError:" + e.getMessage());
-            }
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.i(TAG, "onError:" + e.getMessage());
+                    }
 
-            @Override
-            public void onComplete() {
-                Log.i(TAG, "onComplete");
-            }
-        });
+                    @Override
+                    public void onComplete() {
+                        Log.i(TAG, "onComplete");
+                    }
+                });
 
     }
 
     /**
      * onResumeNext
+     *
      * @param view
      */
     public void RxResumeNext(View view) {
@@ -703,6 +714,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * onExceptionResumeNext
+     *
      * @param view
      */
     public void RxExceptionNext(View view) {
@@ -751,6 +763,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * retry
+     *
      * @param view
      */
     public void RxRetry(View view) {
@@ -766,7 +779,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 emitter.onComplete();
             }
-        }).retry(3,new Predicate<Throwable>() {
+        }).retry(3, new Predicate<Throwable>() {
             @Override
             public boolean test(Throwable throwable) throws Exception {
                 return true;
@@ -793,5 +806,42 @@ public class MainActivity extends AppCompatActivity {
                         Log.i(TAG, "onComplete");
                     }
                 });
+    }
+
+    public void RxFlowable(View view) {
+
+        Flowable.create(new FlowableOnSubscribe<String>() {
+            @Override
+            public void subscribe(FlowableEmitter<String> emitter) throws Exception {
+                for (int i = 0; i < Integer.MAX_VALUE; i++) {
+                    emitter.onNext("发射" + i);
+                }
+                emitter.onComplete();
+            }
+        }, BackpressureStrategy.BUFFER)
+                //.subscribeOn(Schedulers.io())
+                //.observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<String>() {
+                    @Override
+                    public void onSubscribe(Subscription s) {
+                        //s.request(1);
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        Log.d(TAG, s);
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        Log.d(TAG, t.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete");
+                    }
+                });
+
     }
 }
