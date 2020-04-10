@@ -22,7 +22,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okio.BufferedSink;
 
 public class OkHttpActivity extends AppCompatActivity {
 
@@ -37,6 +36,7 @@ public class OkHttpActivity extends AppCompatActivity {
 
     /**
      * get请求
+     *
      * @param view
      */
     public void doGet(View view) {
@@ -51,7 +51,7 @@ public class OkHttpActivity extends AppCompatActivity {
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                Log.d(TAG,e.getMessage());
+                Log.d(TAG, e.getMessage());
             }
 
             @Override
@@ -88,7 +88,7 @@ public class OkHttpActivity extends AppCompatActivity {
         String requestBody = "I am hjy";
         Request request = new Request.Builder()
                 .url("https://api.github.com/markdown/raw")
-                .post(RequestBody.create(mediaType,requestBody))
+                .post(RequestBody.create(mediaType, requestBody))
                 .build();
 
         OkHttpClient okHttpClient = new OkHttpClient();
@@ -113,14 +113,14 @@ public class OkHttpActivity extends AppCompatActivity {
 
     /**
      * post提交表单
+     *
      * @param view
      */
     public void doPostForm(View view) {
 
         OkHttpClient okHttpClient = new OkHttpClient();
 
-
-        RequestBody requestBody = new FormBody.Builder().add("search","Jurassic Park").build();
+        RequestBody requestBody = new FormBody.Builder().add("search", "Jurassic Park").build();
 
         Request request = new Request.Builder()
                 .url("https://en.wikipedia.org/w/index.php")
@@ -135,7 +135,7 @@ public class OkHttpActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                Log.d(TAG, response.protocol() + " " +response.code() + " " + response.message());
+                Log.d(TAG, response.protocol() + " " + response.code() + " " + response.message());
                 Headers headers = response.headers();
                 for (int i = 0; i < headers.size(); i++) {
                     Log.d(TAG, headers.name(i) + ":" + headers.value(i));
