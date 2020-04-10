@@ -1,28 +1,44 @@
 package com.sdk.morr;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
 import io.reactivex.observables.GroupedObservable;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,7 +50,51 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        immersive();
+        setHeightAndPadding(this,toolbar);
     }
+
+    private void immersive(){
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT){
+            return;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            //设置状态栏颜色透明
+            window.setStatusBarColor(Color.TRANSPARENT);
+
+            int visibility = window.getDecorView().getSystemUiVisibility();
+            //布局内容全屏展示
+            visibility |= View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+            //隐藏虚拟导航栏
+            //visibility |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+            //防止内容区域大小发生变化
+            visibility |= View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+
+            window.getDecorView().setSystemUiVisibility(visibility);
+        }else {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+
+    }
+
+    public int getStatusBarHeight(Context context){
+        int resId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resId > 0){
+            return context.getResources().getDimensionPixelSize(resId);
+        }
+        return 0;
+    }
+
+    public void setHeightAndPadding(Context context, View view){
+        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+        layoutParams.height += getStatusBarHeight(context);
+        view.setPadding(view.getPaddingLeft(), view.getPaddingTop() + getStatusBarHeight(context), view.getPaddingRight(), view.getPaddingBottom());
+    }
+
 
     /**
      * create
@@ -622,32 +682,33 @@ public class MainActivity extends AppCompatActivity {
                 return 404;
             }
         })
-        .subscribe(new Observer<Integer>() {
-            @Override
-            public void onSubscribe(Disposable d) {
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-            }
+                    }
 
-            @Override
-            public void onNext(Integer integer) {
-                Log.i(TAG, "onNext :" + integer);
-            }
+                    @Override
+                    public void onNext(Integer integer) {
+                        Log.i(TAG, "onNext :" + integer);
+                    }
 
-            @Override
-            public void onError(Throwable e) {
-                Log.i(TAG, "onError:" + e.getMessage());
-            }
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.i(TAG, "onError:" + e.getMessage());
+                    }
 
-            @Override
-            public void onComplete() {
-                Log.i(TAG, "onComplete");
-            }
-        });
+                    @Override
+                    public void onComplete() {
+                        Log.i(TAG, "onComplete");
+                    }
+                });
 
     }
 
     /**
      * onResumeNext
+     *
      * @param view
      */
     public void RxResumeNext(View view) {
@@ -703,6 +764,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * onExceptionResumeNext
+     *
      * @param view
      */
     public void RxExceptionNext(View view) {
@@ -751,6 +813,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * retry
+     *
      * @param view
      */
     public void RxRetry(View view) {
@@ -766,7 +829,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 emitter.onComplete();
             }
-        }).retry(3,new Predicate<Throwable>() {
+        }).retry(3, new Predicate<Throwable>() {
             @Override
             public boolean test(Throwable throwable) throws Exception {
                 return true;
@@ -793,5 +856,42 @@ public class MainActivity extends AppCompatActivity {
                         Log.i(TAG, "onComplete");
                     }
                 });
+    }
+
+    public void RxFlowable(View view) {
+
+        Flowable.create(new FlowableOnSubscribe<String>() {
+            @Override
+            public void subscribe(FlowableEmitter<String> emitter) throws Exception {
+                for (int i = 0; i < Integer.MAX_VALUE; i++) {
+                    emitter.onNext("发射" + i);
+                }
+                emitter.onComplete();
+            }
+        }, BackpressureStrategy.BUFFER)
+                //.subscribeOn(Schedulers.io())
+                //.observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<String>() {
+                    @Override
+                    public void onSubscribe(Subscription s) {
+                        //s.request(1);
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        Log.d(TAG, s);
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        Log.d(TAG, t.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete");
+                    }
+                });
+
     }
 }
