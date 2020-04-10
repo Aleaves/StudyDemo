@@ -8,29 +8,35 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import android.os.Handler;
+import android.os.Message;
+import android.provider.Settings;
+import android.view.View;
+import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NotificationCompat;
 
-import android.os.Handler;
-import android.os.Message;
-import android.provider.Settings;
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.RemoteViews;
-import android.widget.Toast;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
+
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -45,10 +51,10 @@ public class MainActivity extends AppCompatActivity {
         });
         initNotify();
 
-        handler.sendEmptyMessageDelayed(1,3000);
+        handler.sendEmptyMessageDelayed(1, 3000);
     }
 
-    private Handler handler = new Handler(){
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
@@ -59,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 正常通知  >26则无法弹出  需要添加渠道号
      */
-    private void alertNotify(){
+    private void alertNotify() {
         NotificationManager notificationManager = (NotificationManager) getSystemService
                 (NOTIFICATION_SERVICE);
 
@@ -83,8 +89,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-    private void initNotify(){
+    private void initNotify() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String channelId = "MyCustomChannel";
             String channelName = "自定义Channel";
@@ -98,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void alertNotify26(){
+    private void alertNotify26() {
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -112,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        RemoteViews mRemoteViews = new RemoteViews(getPackageName(),R.layout.activity_notification);
+        RemoteViews mRemoteViews = new RemoteViews(getPackageName(), R.layout.activity_notification);
 
         Notification notification = new NotificationCompat.Builder(this, "MyCustomChannel")
                 .setContentTitle("正在下载...")
@@ -123,8 +128,8 @@ public class MainActivity extends AppCompatActivity {
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
 
                 .setPriority(NotificationCompat.PRIORITY_MAX) //设置通知的优先级：最大
-                .setProgress(100,50,false)
-                .setContentText("下载进度:"+"50%")
+                .setProgress(100, 50, false)
+                .setContentText("下载进度:" + "50%")
                 // 设置显示角标的数量（注：如果需要显示出来，需要长按图标）
                 .setNumber(2)
                 .setAutoCancel(false).build();
@@ -143,7 +148,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void alertNotify2(){NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+    private void alertNotify2() {
+        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         Notification notification = new NotificationCompat.Builder(this, "subscribe")
                 .setContentTitle("收到一条订阅消息")
                 .setContentText("北京市教委：明天要放假了~")
