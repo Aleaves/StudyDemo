@@ -11,6 +11,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jakewharton.rxbinding3.view.RxView;
 import com.sdk.mvp.entity.UserInfo;
+import com.sdk.mvp.test.Dog;
 import com.sdk.mvp.ui.Presenter.UserPresenter;
 import com.sdk.mvp.ui.UserView;
 
@@ -315,5 +316,12 @@ public class MainActivity extends AppCompatActivity implements UserView {
     @Override
     public void dismissLoading() {
 
+    }
+
+
+    public void test(){
+        Dog dog = new Dog();
+
+        //dog.getClass().getDeclaredMethod()
     }
 }
