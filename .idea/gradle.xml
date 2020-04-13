@@ -11,6 +11,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/db" />
             <option value="$PROJECT_DIR$/dbutil" />
+            <option value="$PROJECT_DIR$/filedownload" />
             <option value="$PROJECT_DIR$/glidedemo" />
             <option value="$PROJECT_DIR$/kotdemo" />
             <option value="$PROJECT_DIR$/morr" />
