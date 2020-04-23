@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/kotdemo" />
             <option value="$PROJECT_DIR$/morr" />
             <option value="$PROJECT_DIR$/mvp" />
+            <option value="$PROJECT_DIR$/recyclertest" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
