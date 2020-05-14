@@ -22,6 +22,9 @@ import androidx.core.app.NotificationCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -52,6 +55,16 @@ public class MainActivity extends AppCompatActivity {
         initNotify();
 
         handler.sendEmptyMessageDelayed(1, 3000);
+
+        List<String> lists = new ArrayList(){
+            {
+                add("112");
+                add("345");
+                add("789");
+            }
+        };
+
+
     }
 
     private Handler handler = new Handler() {

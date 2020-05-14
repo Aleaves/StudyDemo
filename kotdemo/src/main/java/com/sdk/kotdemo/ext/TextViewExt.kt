@@ -11,3 +11,6 @@ fun FloatingActionButton.setColor(){
 
 }
 
+fun String.lastChar() :Char{
+    return this.get(this.length - 1)
+}

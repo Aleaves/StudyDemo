@@ -1,2 +1,2 @@
-include ':app', ':glidedemo', ':kotdemo', ':dbutil', ':db', ':mvp', ':morr', ':recyclertest', ':filedownload'
+include ':app', ':glidedemo', ':kotdemo', ':dbutil', ':db', ':mvp', ':morr', ':recyclertest', ':filedownload', ':weatherapp', ':simpleeyes'
 rootProject.name='StudyDemo'

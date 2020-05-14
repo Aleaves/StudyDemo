@@ -17,6 +17,8 @@
             <option value="$PROJECT_DIR$/morr" />
             <option value="$PROJECT_DIR$/mvp" />
             <option value="$PROJECT_DIR$/recyclertest" />
+            <option value="$PROJECT_DIR$/simpleeyes" />
+            <option value="$PROJECT_DIR$/weatherapp" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
