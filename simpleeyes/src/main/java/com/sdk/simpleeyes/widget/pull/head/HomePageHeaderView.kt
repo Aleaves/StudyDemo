@@ -11,6 +11,9 @@ import com.sdk.simpleeyes.R
 import com.sdk.simpleeyes.entity.Content
 import com.sdk.simpleeyes.entity.TopIssue
 import com.sdk.simpleeyes.ui.base.BaseFragment
+import com.sdk.simpleeyes.ui.home.DailyEliteActivity
+import com.sdk.simpleeyes.ui.search.SearchHotActivity
+import com.sdk.simpleeyes.ui.video.VideoDetailActivity
 import com.sdk.simpleeyes.utils.bindView
 import com.sdk.simpleeyes.utils.readyGo
 import com.sdk.simpleeyes.widget.font.CustomFontTypeWriterTextView
@@ -73,11 +76,11 @@ class HomePageHeaderView : FrameLayout {
         })
         //跳转到搜索界面
         mIvSearch.setOnClickListener {
-            //mBaseFragment.readyGo<SearchHotActivity>()
+            mBaseFragment.readyGo<SearchHotActivity>()
         }
         //跳转到每日精选
         mMoreContainer.setOnClickListener {
-            //mBaseFragment.readyGo<DailyEliteActivity>()
+            mBaseFragment.readyGo<DailyEliteActivity>()
         }
 
     }
@@ -97,7 +100,7 @@ class HomePageHeaderView : FrameLayout {
         mBanner.setDelayTime(6000)
         mBanner.setOnBannerListener {
             val item = mTopIssue.data.itemList[it]
-//            VideoDetailActivity.start(context, item.data, videoListInfo as ArrayList, 0)
+            VideoDetailActivity.start(context, item.data, videoListInfo as ArrayList, 0)
         }
     }
 

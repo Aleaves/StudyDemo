@@ -25,4 +25,35 @@ class HomePresenter : BasePresenter<HomeView>() {
                 })
     }
 
+    fun refreshCategoryData(){
+        mHomeModel.refreshCategoryInfo().autoDispose(mScopeProvider)
+                .subscribe ({
+                    mView?.showContent()
+                    mNextPageUrl = it.nextPageUrl
+                    mView?.refreshDataSuccess(it)
+                },{
+                    mView?.showNetError(View.OnClickListener {
+                        refreshCategoryData()
+                    })
+                })
+    }
+
+    fun loadMoreCategoryData(){
+        if (mNextPageUrl != null) {
+            mHomeModel.loadMoreAndyInfo(mNextPageUrl).autoDispose(mScopeProvider).subscribe({
+                mView?.showContent()
+                if (it.nextPageUrl == null) {
+                    mView?.showNoMore()
+                } else {
+                    mNextPageUrl = it.nextPageUrl
+                    mView?.loadMoreSuccess(it)
+                }
+            }, {
+                mView?.showNetError(View.OnClickListener {
+                    loadMoreCategoryData()
+                })
+            })
+        }
+    }
+
 }

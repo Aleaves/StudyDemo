@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jennifer.andy.simpleeyes.ui.base.adapter.BaseDataAdapter
+import com.jennifer.andy.simpleeyes.widget.CustomLoadMoreView
 import com.sdk.simpleeyes.R
 import com.sdk.simpleeyes.entity.AndyInfo
 import com.sdk.simpleeyes.ui.base.BaseFragment
@@ -14,6 +15,7 @@ import com.sdk.simpleeyes.utils.bindView
 import com.sdk.simpleeyes.utils.getScreenHeight
 import com.sdk.simpleeyes.utils.getScreenWidth
 import com.sdk.simpleeyes.widget.pull.head.HomePageHeaderView
+import com.sdk.simpleeyes.widget.pull.zoom.PullToZoomBase
 import com.sdk.simpleeyes.widget.pull.zoom.PullToZoomRecyclerView
 
 class HomeFragment : BaseFragment<HomeView, HomePresenter>(), HomeView {
@@ -30,6 +32,20 @@ class HomeFragment : BaseFragment<HomeView, HomePresenter>(), HomeView {
     override fun getContentViewLayoutId(): Int = R.layout.fragment_home
 
     override fun initView(savedInstanceState: Bundle?) {
+        mPullToZoomRecycler.setOnPullZoomListener(object : PullToZoomBase.OnPullZoomListener{
+            override fun onPullZooming(scrollValue: Int) {
+                mHomePageHeaderView.showRefreshCover(scrollValue)
+            }
+
+            override fun onPullZoomEnd() {
+                if(mHomePageHeaderView.judgeCanRefresh()){
+                    mPresenter.refreshCategoryData()
+                }else{
+                    mHomePageHeaderView.hideRefreshCover()
+                }
+            }
+        })
+
         mPresenter.loadCategoryData()
     }
 
@@ -37,6 +53,8 @@ class HomeFragment : BaseFragment<HomeView, HomePresenter>(), HomeView {
         if (mCateGoryAdapter == null) {
             setHeaderInfo(andyInfo)
             setAdapterAndListener(andyInfo)
+        }else {
+            mCateGoryAdapter?.setNewData(andyInfo.itemList)
         }
     }
 
@@ -52,23 +70,30 @@ class HomeFragment : BaseFragment<HomeView, HomePresenter>(), HomeView {
         val recyclerView = mPullToZoomRecycler.getPullRootView()
         recyclerView.setItemViewCacheSize(10)
         mCateGoryAdapter = BaseDataAdapter(andyInfo.itemList)
+        mCateGoryAdapter?.setOnLoadMoreListener({
+            mPresenter.loadMoreCategoryData()
+        },recyclerView)
+        mCateGoryAdapter?.setLoadMoreView(CustomLoadMoreView())
         mPullToZoomRecycler.setAdapterAndLayoutManager(mCateGoryAdapter!!, LinearLayoutManager(_mActivity))
     }
 
     override fun refreshDataSuccess(andyInfo: AndyInfo) {
-
+        mCateGoryAdapter?.removeAllFooterView()
+        mCateGoryAdapter?.setNewData(andyInfo.itemList)
+        mHomePageHeaderView.hideRefreshCover()
     }
 
     override fun loadMoreSuccess(andyInfo: AndyInfo) {
-
+        mCateGoryAdapter?.addData(andyInfo.itemList)
+        mCateGoryAdapter?.loadMoreComplete()
     }
 
     override fun showNoMore() {
-
+        mCateGoryAdapter?.loadMoreEnd()
     }
 
     fun scrollToTop() {
-
+        mPullToZoomRecycler.scrollToTop()
     }
 
 }

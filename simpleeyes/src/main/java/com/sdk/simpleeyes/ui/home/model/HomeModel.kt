@@ -6,8 +6,9 @@ import com.sdk.simpleeyes.rx.RxThreadHelper
 import com.sdk.simpleeyes.rx.error.globalHandleError
 import com.sdk.simpleeyes.ui.base.model.BaseModel
 import io.reactivex.Observable
+import java.util.concurrent.TimeUnit
 
-class HomeModel: BaseModel{
+class HomeModel : BaseModel {
     /**
      * 加载首页信息
      */
@@ -16,4 +17,16 @@ class HomeModel: BaseModel{
                     .getHomeInfo()
                     .compose(globalHandleError())
                     .compose(RxThreadHelper.switchObservableThread())
+
+
+    /**
+     * 刷新主页信息，延迟1秒执行
+     */
+    fun refreshCategoryInfo(): Observable<AndyInfo> =
+            Api.getDefault()
+                    .getHomeInfo()
+                    .delay(1000,TimeUnit.MICROSECONDS)
+                    .compose(globalHandleError())
+                    .compose(RxThreadHelper.switchObservableThread())
+
 }
