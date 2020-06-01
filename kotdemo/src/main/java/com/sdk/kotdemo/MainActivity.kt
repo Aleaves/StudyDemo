@@ -1,11 +1,22 @@
 package com.sdk.kotdemo
 
+import android.animation.ValueAnimator
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.view.MotionEvent
+import android.view.View
+import android.view.WindowInsets
+import android.view.animation.AlphaAnimation
+import android.view.animation.ScaleAnimation
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.sdk.kotdemo.a.Student
 import com.sdk.kotdemo.a.UserInfo
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,10 +31,11 @@ class MainActivity : AppCompatActivity() {
 //            test1()
 //            test2()
             test3()
+            Log.i("=========","${tv_name.measuredWidth}==${tv_name.measuredHeight}")
         }
-//       / fab.setColor()
 
     }
+
 
     private fun test3() {
         val user = UserInfo(){
@@ -61,6 +73,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         println(res)
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        return super.dispatchTouchEvent(ev)
+
     }
 
 }

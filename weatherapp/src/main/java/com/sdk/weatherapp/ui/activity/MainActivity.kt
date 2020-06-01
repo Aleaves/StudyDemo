@@ -50,6 +50,7 @@ class MainActivity : CoroutineScopeActivity(), ToolbarManager {
             var adapter = ForecastListAdapter(result.list) {
 
             }
+            println("============111")
             runOnUiThread {
                 forecastList.adapter = adapter
             }
