@@ -20,7 +20,41 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_main" />
+    <include
+        layout="@layout/content_main"
+        />
+
+<!--    <androidx.core.widget.NestedScrollView-->
+<!--        android:id="@+id/bottomsheet"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"-->
+<!--        app:behavior_peekHeight="20dp"-->
+<!--        app:behavior_hideable="true">-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@color/colorAccent"-->
+<!--            android:orientation="vertical">-->
+
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:padding="50dp"-->
+<!--                android:background="@color/colorPrimary"-->
+<!--                android:text="人不会死在绝境，却往往栽在十字路口"-->
+<!--                android:textColor="@android:color/white"/>-->
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:padding="50dp"-->
+<!--                android:background="@color/colorPrimary"-->
+<!--                android:text="人不会死在绝境，却往往栽在十字路口"-->
+<!--                android:textColor="@android:color/white"/>-->
+<!--        </LinearLayout>-->
+
+<!--    </androidx.core.widget.NestedScrollView>-->
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

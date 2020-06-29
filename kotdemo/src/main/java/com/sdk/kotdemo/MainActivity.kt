@@ -1,18 +1,22 @@
 package com.sdk.kotdemo
 
+import android.animation.ValueAnimator
+import android.os.Build
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.Menu
-import android.view.MenuItem
-import android.widget.EditText
+import android.util.Log
+import android.view.MotionEvent
+import android.view.View
+import android.view.WindowInsets
+import android.view.animation.AlphaAnimation
+import android.view.animation.ScaleAnimation
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
-import com.sdk.kotdemo.ext.setColor
-import com.sdk.kotdemo.ext.setName
-import com.sdk.kotdemo.f.TestFun
+import com.sdk.kotdemo.a.Student
+import com.sdk.kotdemo.a.UserInfo
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,28 +28,56 @@ class MainActivity : AppCompatActivity() {
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
+//            test1()
+//            test2()
+            test3()
+            Log.i("=========","${tv_name.measuredWidth}==${tv_name.measuredHeight}")
         }
-        fab.setColor()
-        //tv_name.text = "123"
-        tv_name.setName("45465")
-        val testFun = TestFun()
-        //println("=========" + testFun.sum(1, 3))
-        testFun.test4()
+
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
+
+    private fun test3() {
+        val user = UserInfo(){
+            "122"
+        }
+        user.setOnUserName()
+        val student = Student("tom",18)
+        student.name
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
-        }
+    private fun test1() {
+        val testmap = mapOf<String, String?>("name" to null, "age" to "23")
+
+        val map = mapOf("name" to "tom", "age" to 20)
+        var user = User(map)
+        println(user.name + "===" + user.age)
     }
+
+    class User(var map: Map<String, Any?>) {
+        val name: String by map
+        val age: Int by map
+    }
+
+    private fun test2() {
+        var s = "12212"
+        var result = s.let {
+            1000
+            200
+            it.substring(1, 2)
+        }
+        println(result)
+
+        var res = with(s) {
+            substring(1, 2)
+        }
+
+        println(res)
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        return super.dispatchTouchEvent(ev)
+
+    }
+
 }
