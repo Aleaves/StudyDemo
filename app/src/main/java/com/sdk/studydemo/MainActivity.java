@@ -1,34 +1,49 @@
 package com.sdk.studydemo;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.FileProvider;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity";
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -48,24 +63,72 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //alertNotify();
-                alertNotify26();
+                //alertNotify26();
                 //alertNotify2();
+                startVideo();
+
+
             }
         });
         initNotify();
 
         handler.sendEmptyMessageDelayed(1, 3000);
 
-        List<String> lists = new ArrayList(){
+        List<String> lists = new ArrayList() {
             {
                 add("112");
                 add("345");
                 add("789");
             }
         };
-
-
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
     }
+
+    Uri fileUri;
+
+    private void startVideo() {
+        Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+
+        try {
+            File file = createMediaFile();
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
+                fileUri = FileProvider.getUriForFile(this,"com.sdk.studydemo.fileprovider",file);
+            }else{
+                fileUri = Uri.fromFile(file);
+            }
+        } catch (Exception e) {
+
+        }
+
+
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+        intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
+        startActivityForResult(intent, 100);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, resultCode + "===="+requestCode);
+        if (requestCode == 100) {
+            Log.d(TAG, resultCode + "");
+        }
+    }
+
+    private File createMediaFile() throws IOException {
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), "CameraDemo");
+        Log.d(TAG,mediaStorageDir.getAbsolutePath());
+        if(!mediaStorageDir.exists()){
+            boolean isSuccess = mediaStorageDir.mkdirs();
+            Log.d(TAG,isSuccess+"");
+        }
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "VID_" + timeStamp;
+        String suffix = ".mp4";
+        File mediaFile = new File(mediaStorageDir + File.separator + imageFileName + suffix);
+        return mediaFile;
+    }
+
 
     private Handler handler = new Handler() {
         @Override
