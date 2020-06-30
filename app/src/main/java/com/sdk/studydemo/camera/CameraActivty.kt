@@ -106,6 +106,8 @@ class CameraActivty : AppCompatActivity() {
         }
     }
 
+    // 0  1  1  2  3  5  8  13
+
     private fun createImageFile() :File {
         var imageName = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         var storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)

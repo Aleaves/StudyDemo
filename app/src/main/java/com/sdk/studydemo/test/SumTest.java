@@ -3,7 +3,7 @@ package com.sdk.studydemo.test;
 public class SumTest {
 
     public static void main(String[] args) {
-        System.out.println(fib2(40));
+        System.out.println(fib2(8));
 
     }
 
