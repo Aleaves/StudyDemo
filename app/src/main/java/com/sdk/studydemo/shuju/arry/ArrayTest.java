@@ -1,5 +1,7 @@
 package com.sdk.studydemo.shuju.arry;
 
+import java.util.LinkedList;
+
 public class ArrayTest {
     public static void main(String[] args) {
         ArrayList<Integer> list = new ArrayList<Integer>();
@@ -19,7 +21,7 @@ public class ArrayTest {
         list.add(11);
         list.add(12);
         list.add(13);
-
         System.out.println(list.toString());
+
     }
 }
