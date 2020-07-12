@@ -17,4 +17,11 @@
         android:onClick="startCamera"
         />
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="内存泄露测试"
+        android:onClick="startHandler"
+        />
+
 </LinearLayout>

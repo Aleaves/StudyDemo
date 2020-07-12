@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.sdk.studydemo.activity.HandlerActivity
 import com.sdk.studydemo.camera.CameraActivty
 
 class AppMainActivity : AppCompatActivity(){
@@ -15,6 +16,10 @@ class AppMainActivity : AppCompatActivity(){
 
     fun startCamera(view: View) {
         startActivity(Intent(this,CameraActivty::class.java))
+    }
+
+    fun startHandler(view: View) {
+        startActivity(Intent(this,HandlerActivity::class.java))
     }
 
 }
