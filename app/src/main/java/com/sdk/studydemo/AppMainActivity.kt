@@ -22,4 +22,8 @@ class AppMainActivity : AppCompatActivity(){
         startActivity(Intent(this,HandlerActivity::class.java))
     }
 
+    fun startCrash(view: View) {
+
+    }
+
 }
