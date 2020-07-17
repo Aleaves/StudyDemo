@@ -148,10 +148,10 @@ class OkHttpActivity : AppCompatActivity() {
         val client = OkHttpClient.Builder()
                 .cache(cache)
                 .addInterceptor(httpLoggingInterceptor)
-                .addInterceptor(CacheInterceptor())
+                //.addInterceptor(CacheInterceptor())
                 .build()
 
-        val request = Request.Builder().url("http://publicobject.com/helloworld.txt")
+        val request = Request.Builder().url("https://publicobject.com/helloworld.txt")
                 //.cacheControl(cacehControl)
                 .build()
 
@@ -161,7 +161,6 @@ class OkHttpActivity : AppCompatActivity() {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                Log.i("============2", response.body?.string())
                 Log.i("============12", response.cacheResponse.toString());
                 Log.i("============22", response.networkResponse.toString());
             }
@@ -207,7 +206,7 @@ class OkHttpActivity : AppCompatActivity() {
         }
         builder.add("sign",MD5Utils.getSafeSign(map,"y6Se+mmV@^Z+LqD-"))
 
-        val cacehControl = CacheControl.Builder().onlyIfCached().build()
+        val cacehControl = CacheControl.Builder().maxAge(30,TimeUnit.SECONDS).build()
         val request = Request.Builder().post(builder.build()).url("https://adapi.mg3721.com/dana/useEncrypt")
                 .cacheControl(cacehControl)
                 .build()
@@ -219,8 +218,8 @@ class OkHttpActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 //Log.i("============2", response.body?.string())
-                Log.i("============12", response.cacheResponse.toString());
-                Log.i("============22", response.networkResponse.toString());
+                Log.i("============", "cacheResponse:"+response.cacheResponse.toString());
+                Log.i("============", "networkResponse:"+response.networkResponse.toString());
             }
         })
 
