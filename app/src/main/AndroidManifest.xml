@@ -13,6 +13,7 @@
 <!--        android:required="true" />-->
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -37,6 +38,9 @@
         <activity
             android:name=".activity.HandlerActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".activity.OkHttpActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            />
     </application>
 
 </manifest>
