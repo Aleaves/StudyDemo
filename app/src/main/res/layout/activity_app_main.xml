@@ -24,4 +24,11 @@
         android:onClick="startHandler"
         />
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Okhttp测试"
+        android:onClick="startCrash"
+        />
+
 </LinearLayout>
