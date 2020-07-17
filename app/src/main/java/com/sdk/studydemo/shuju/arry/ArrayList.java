@@ -90,6 +90,20 @@ public class ArrayList<E> {
         System.out.println(oldCapacity + "扩容为" + newCapacity);
     }
 
+    private void trim() {
+        int oldCapacity = elements.length;
+        int newCapacity = oldCapacity >> 1;
+        if (size >= newCapacity || oldCapacity <= DEFAULT_CAPACITY) return;
+
+        E[] newElements = (E[]) new Object[newCapacity];
+        for (int i = 0; i < size; i++) {
+            newElements[i] = elements[i];
+        }
+        elements = newElements;
+        System.out.println(oldCapacity + "缩容为" + newCapacity);
+    }
+
+
     public E remove(int index) {
 
         rangeCheck(index);
@@ -100,6 +114,7 @@ public class ArrayList<E> {
         }
         size--;
         elements[size] = null;
+        trim();
         return old;
     }
 
