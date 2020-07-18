@@ -12,6 +12,7 @@ import com.sdk.studydemo.utils.MD5Utils
 import com.sdk.studydemo.utils.xxtea.XXTEA
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.internal.cache.CacheInterceptor
 import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONArray
 import org.json.JSONObject
@@ -181,9 +182,9 @@ class OkHttpActivity : AppCompatActivity() {
         val client = OkHttpClient.Builder()
                 .cache(cache)
                 .addInterceptor(httpLoggingInterceptor)
+                .cookieJar(CookieJar.NO_COOKIES)
                 //.addInterceptor(CacheInterceptor())
                 .build()
-
 
         var map = mapOf<String,String>(
                 "uuid" to "KY123456",
